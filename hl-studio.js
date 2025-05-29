@@ -6,26 +6,32 @@
 
 const hlStudio = (function (hl) {
   if (hl == null) {
-    console.log('HL Studio needs hl-gen.js to be loaded first. Exiting...');
+    console.log("HL Studio needs hl-gen.js to be loaded first. Exiting...");
     return;
   } else {
-    console.log('HL Studio loaded!');
+    console.log("HL Studio loaded!");
   }
 
   // Give the user a flag to know if they are in studio mode
-  hl.context.studioMode = new URLSearchParams(window.location.search).get('hls') === '1';
-  hl.context.isCurated = new URLSearchParams(window.location.search).get('ic') === '1';
+  hl.context.studioMode =
+    new URLSearchParams(window.location.search).get("hls") === "1";
+  hl.context.isCurated =
+    new URLSearchParams(window.location.search).get("ic") === "1";
 
   const originalReferences = {
     ...hl,
-    randomSeed: hl.context.isCurated ? xmur3(hl.tx.hash) : xmur3(hl.tx.hash + hl.tx.tokenId),
+    randomSeed: hl.context.isCurated
+      ? xmur3(hl.tx.hash)
+      : xmur3(hl.tx.hash + hl.tx.tokenId),
   };
 
   function xmur3(str) {
     for (var i = 0, h = 1779033703 ^ str.length; i < str.length; i++)
-      (h = Math.imul(h ^ str.charCodeAt(i), 3432918353)), (h = (h << 13) | (h >>> 19));
+      (h = Math.imul(h ^ str.charCodeAt(i), 3432918353)),
+        (h = (h << 13) | (h >>> 19));
     return function () {
-      (h = Math.imul(h ^ (h >>> 16), 2246822507)), (h = Math.imul(h ^ (h >>> 13), 3266489909));
+      (h = Math.imul(h ^ (h >>> 16), 2246822507)),
+        (h = Math.imul(h ^ (h >>> 13), 3266489909));
       return (h ^= h >>> 16) >>> 0;
     };
   }
@@ -52,7 +58,7 @@ const hlStudio = (function (hl) {
     if (window.top != null) {
       window.top.postMessage(
         {
-          source: 'hl-studio',
+          source: "hl-studio",
           eventName,
           data,
           metadata: {
@@ -61,27 +67,29 @@ const hlStudio = (function (hl) {
             timestamp: Date.now(),
           },
         },
-        '*'
+        "*"
       );
     }
   }
 
   function createScreenshot(element) {
     if (element == null) {
-      console.error('The element must be a CANVAS or an IMG element. Exiting...');
+      console.error(
+        "The element must be a CANVAS or an IMG element. Exiting..."
+      );
       return;
     }
 
     let data = null;
 
-    if (element.tagName === 'CANVAS') {
-      data = element.toDataURL('image/png');
+    if (element.tagName === "CANVAS") {
+      data = element.toDataURL("image/png");
     }
-    if (element.tagName === 'IMG') {
+    if (element.tagName === "IMG") {
       data = element.src;
     }
 
-    postMessageOnTopWindow('SCREENSHOT_CREATED', {
+    postMessageOnTopWindow("SCREENSHOT_CREATED", {
       imageData: data,
     });
   }
@@ -94,13 +102,13 @@ const hlStudio = (function (hl) {
 
   hl.token = new Proxy(hl.token, {
     get(target, prop) {
-      if (prop !== 'capturePreview' || !hasCapturePreviewBeenCalled) {
-        if (prop === 'capturePreview') {
+      if (prop !== "capturePreview" || !hasCapturePreviewBeenCalled) {
+        if (prop === "capturePreview") {
           hasCapturePreviewBeenCalled = true;
         }
 
-        postMessageOnTopWindow('PROPERTY_GET', {
-          parent: 'token',
+        postMessageOnTopWindow("PROPERTY_GET", {
+          parent: "token",
           prop,
         });
       }
@@ -108,8 +116,8 @@ const hlStudio = (function (hl) {
       return target[prop];
     },
     set(target, prop, value) {
-      postMessageOnTopWindow('PROPERTY_SET', {
-        parent: 'token',
+      postMessageOnTopWindow("PROPERTY_SET", {
+        parent: "token",
         prop,
         value,
       });
@@ -136,15 +144,15 @@ const hlStudio = (function (hl) {
     return min + (max - min) * rand;
   };
 
-  postMessageOnTopWindow('HLSTUDIO_INIT', { version: '0.0.2' });
+  postMessageOnTopWindow("HLSTUDIO_INIT", { version: "0.0.2" });
 
-  window.addEventListener('message', (event) => {
-    if (event.data.eventName === 'CAPTURE_PREVIEW') {
+  window.addEventListener("message", (event) => {
+    if (event.data.eventName === "CAPTURE_PREVIEW") {
       const selector = event.data.data.selector;
       createScreenshot(document.querySelector(selector));
     }
 
-    if (event.data.eventName === 'HARVEST_TRAIT') {
+    if (event.data.eventName === "HARVEST_TRAIT") {
       if (window.calculateHLTraits == null) {
         return;
       }
@@ -160,7 +168,7 @@ const hlStudio = (function (hl) {
       };
 
       const newTraits = window.calculateHLTraits(newHl);
-      postMessageOnTopWindow('HLSTUDIO_HARVESTED_TRAIT', {
+      postMessageOnTopWindow("HLSTUDIO_HARVESTED_TRAIT", {
         traits: newTraits,
       });
     }
