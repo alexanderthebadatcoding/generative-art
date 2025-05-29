@@ -72,6 +72,11 @@ function draw() {
   noStroke();
   background("#393939");
 
+  if (hl.context.studioMode === true) {
+    // No need to do anything we just want the background color to show
+    return;
+  }
+
   let margin = width * 0.1;
   let gap = width * 0.02;
   let rectWidth = (width - margin * 2 - gap * (4 - 1)) / 4;
