@@ -59,9 +59,9 @@ function setup() {
   console.log(traits);
 
   // Also set a name and description for this token
-  hl.token.setName(`Example token #${hl.tx.tokenId}`);
+  hl.token.setName(`Eth Address Pallette #${hl.tx.tokenId}`);
   hl.token.setDescription(
-    `This is an token generated as part of an example project for using hl-gen.js. It has 3 rectangles with colors based on the minting address. The first color is ${color[0]}, teh second color is ${color[1]} and the third color is ${color[2]}. The timestamp of the mint was ${hl.tx.timestamp}. The minting wallet address was ${hl.tx.walletAddress}`
+    `This is an token generated as part of an experiment. It has 3 rectangles with colors based on the minting address. The first color is ${colors[0]}, the second color is ${colors[1]} and the third color is ${colors[2]} and the final color is ${colors[3]}. The minting wallet address was ${hl.tx.walletAddress}`
   );
 }
 
